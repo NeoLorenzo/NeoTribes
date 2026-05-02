@@ -1,7 +1,5 @@
 # Tribes
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/GAIGResearch/Tribes?style=plastic) ![Tribes Java 93.5%](https://img.shields.io/github/languages/top/GAIGResearch/Tribes?style=plastic) ![GitHub All Releases](https://img.shields.io/github/downloads/GAIGResearch/Tribes/total?style=plastic) ![GitHub stars](https://img.shields.io/github/stars/GAIGResearch/Tribes?style=social)
-
 # About
 
 A turn-based strategy game framework. Tribes is a multi-player, multi-agent, stochastic and partially observable game that involves strategic and tactical combat decisions. A good playing strategy requires the management of a technology tree, build orders and economy. The framework provides a Forward Model, which can be used by Statistical Forward Planning methods.
