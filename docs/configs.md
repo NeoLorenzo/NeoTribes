@@ -16,6 +16,8 @@ Configuration is split between:
 | --- | --- | --- | --- | --- |
 | `Run Mode` | `string` | `PlayLG` | Selects single-game mode (`PlayLG`, `PlayFile`, `Replay`). | `play.json` |
 | `Run Mode comment` | `string` | `PlayLG / PlayFile / Replay` | Human note only. | `play.json` |
+| `Runtime Mode` | `string` | `headless` | Selects runtime mode (`headless` or `gui`) for Play execution. Defaults to headless when missing. | `play.json` |
+| `Runtime Mode comment` | `string` | `headless / gui` | Human note only. | `play.json` |
 | `Progressive Bias` | `boolean` | `true` | Enables pMCTS progressive bias behavior. | `play.json` |
 | `Pruning` | `boolean` | `true` | Enables pruning in portfolio MCTS. | `play.json` |
 | `K init mult` | `number` | `0.5` | pMCTS init coefficient. | `play.json` |
@@ -35,6 +37,26 @@ Configuration is split between:
 | `Game Seed` | `string/number` | `-1` | Seed for game RNG, random if `-1`. | `play.json` |
 | `Agents Seed` | `string/number` | `-1` | Seed for agent RNG, random if `-1`. | `play.json` |
 | `Level Seed` | `string/number` | `-1` | Seed for level generation, random if `-1`. | `play.json` |
+
+Example `play.json` snippets:
+
+Headless (default contributor mode):
+
+```json
+{
+  "Run Mode": "PlayLG",
+  "Runtime Mode": "headless"
+}
+```
+
+GUI showcase mode:
+
+```json
+{
+  "Run Mode": "PlayLG",
+  "Runtime Mode": "gui"
+}
+```
 
 #### `tournament.json`
 | Name | Type | Value/Default | Effect | Source |

@@ -5,9 +5,12 @@ NeoTribes is a fork of the original [Tribes](https://github.com/GAIGResearch/Tri
 
 This fork is focused on:
 - modernizing the codebase for maintainability and efficiency,
-- improving headless execution workflows,
+- making headless execution the primary runtime path for development, debugging, validation, and CI,
+- improving debugging and validation ergonomics in headless mode (at least as easy as GUI-based workflows),
+- prioritizing efficiency improvements in the headless runtime path,
 - aligning config/game behavior with recent Polytopia expectations,
-- expanding contributor-focused documentation.
+- expanding contributor-focused documentation,
+- keeping GUI support primarily as a showcase/demo layer rather than the main engineering workflow.
 
 As of May 2, 2026, NeoTribes remains intentionally close to upstream Tribes while documentation and baseline workflows are being strengthened.
 

@@ -6,6 +6,8 @@ Provide contributor-first, markdown-native documentation for the current NeoTrib
 ## Current State
 This docs set is focused on the behavior that exists today in this repository. It does not specify future modernization designs.
 
+Project guidance is headless-first for engineering workflows: debugging, validation, and performance work should primarily use non-GUI execution paths.
+
 ## How To
 ### Start Here
 - New contributor: read [Quickstart](./quickstart.md), then [Setup](./setup.md), then [Architecture](./architecture.md).
@@ -18,6 +20,7 @@ This docs set is focused on the behavior that exists today in this repository. I
 - [Runbook](./runbook.md)
 - [Troubleshooting](./troubleshooting.md)
 - [Architecture](./architecture.md)
+- [Headless-First Plan](./headless-first-plan.md)
 - [Extending Agents](./extending-agents.md)
 - [Configs](./configs.md)
 - [Glossary](./glossary.md)

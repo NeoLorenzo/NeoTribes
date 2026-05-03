@@ -5,17 +5,18 @@ Document how runtime entrypoints execute, which config files they read, and what
 
 ## Current State
 The main entrypoints are:
-- `Play` for single-game sessions (GUI by default).
-- `Tournament` for repeated headless evaluations.
-- `RunElites` for MAP-Elites workflows.
+- `Play` for single-game sessions with explicit runtime mode (`headless` by default, `gui` for showcase/demo usage).
+- `Tournament` for repeated headless evaluations (primary validation/debug path).
+- `RunElites` for MAP-Elites workflows (headless).
 
 ## How To
 ### `Play` Flow (Single Game)
 1. Reads `play.json`.
-2. Parses `Run Mode`: `PlayLG` (generated level), `PlayFile` (CSV level), or `Replay` (saved game JSON).
-3. Parses players/tribes arrays and run parameters.
-4. Builds `Game` via `Game.init(...)`.
-5. Calls `Run.runGame(game, keyController, actionController)`.
+2. Parses `Runtime Mode`: `headless` (default if missing) or `gui`.
+3. Parses `Run Mode`: `PlayLG` (generated level), `PlayFile` (CSV level), or `Replay` (saved game JSON).
+4. Parses players/tribes arrays and run parameters.
+5. Builds `Game` via `Game.init(...)`.
+6. Runs headless with `Run.runGame(game)` or GUI with `Run.runGame(game, keyController, actionController)`.
 
 Run command:
 
@@ -25,7 +26,8 @@ java -cp out:lib/json.jar Play
 
 Expected output:
 - Seed logging (`Game seed`, `Agents random seed`, `Level seed`).
-- GUI session if display is available.
+- Headless execution in `Runtime Mode: headless`.
+- GUI session only when `Runtime Mode: gui` and display is available.
 
 ### `Tournament` Flow (Headless)
 1. Reads `tournament.json` (or first CLI arg if provided).

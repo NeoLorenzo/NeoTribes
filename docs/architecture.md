@@ -6,6 +6,8 @@ Describe the current runtime architecture and execution flow so contributors can
 ## Current State
 NeoTribes currently preserves the upstream Tribes architecture with entrypoints in default package classes (`Play`, `Tournament`, `RunElites`) and core simulation logic in `core.game`.
 
+Project direction is headless-first: debugging, validation, and performance work should center on non-GUI execution paths. GUI is retained mainly for showcase/demo usage.
+
 ## How To
 ### High-Level Modules
 - `src/core`: game rules, constants, tech tree, diplomacy, types.
@@ -28,6 +30,8 @@ NeoTribes currently preserves the upstream Tribes architecture with entrypoints 
 - Reads elites config from first argument.
 - Builds a `Runner` that repeatedly launches headless games.
 - Executes MAP-Elites loop.
+
+For contributor workflows, `Tournament` and `RunElites` are the primary operational paths for validation and debugging.
 
 ### Game Loop Lifecycle
 1. `Game.init(...)` constructs `GameState` and players.

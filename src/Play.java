@@ -34,6 +34,12 @@ public class Play {
     private static boolean RUN_VERBOSE = true;
     private static long AGENT_SEED = -1;
     private static long GAME_SEED = -1;
+    private static final String RUNTIME_MODE_KEY = "Runtime Mode";
+
+    private enum RuntimeMode {
+        HEADLESS,
+        GUI
+    }
 
     public static void main(String[] args) {
 
@@ -42,6 +48,7 @@ public class Play {
 
             if (config != null && !config.isEmpty()) {
                 String runMode = config.getString("Run Mode");
+                RuntimeMode runtimeMode = parseRuntimeMode(config);
                 Constants.VERBOSE = config.getBoolean("Verbose");
 
                 JSONArray playersArray = (JSONArray) config.get("Players");
@@ -57,6 +64,15 @@ public class Play {
                     playerTypes[i] = Run.parsePlayerTypeStr(playersArray.getString(i));
                     tribes[i] = Run.parseTribeStr(tribesArray.getString(i));
                 }
+
+                if (runtimeMode == RuntimeMode.HEADLESS) {
+                    for (Run.PlayerType playerType : playerTypes) {
+                        if (playerType == Run.PlayerType.HUMAN) {
+                            throw new Exception("Runtime mode 'headless' does not support Human players.");
+                        }
+                    }
+                }
+
                 Types.GAME_MODE gameMode = config.getString("Game Mode").equalsIgnoreCase("Capitals") ?
                         CAPITALS : SCORE;
 
@@ -84,17 +100,17 @@ public class Play {
 
                 //1. Play one game with visuals using the Level Generator:
                 if (runMode.equalsIgnoreCase("PlayLG")) {
-                    play(tribes, levelSeed, playerTypes, gameMode);
+                    play(tribes, levelSeed, playerTypes, gameMode, runtimeMode);
 
                 //2. Play one game with visuals from a file:
                 } else if (runMode.equalsIgnoreCase("PlayFile")) {
                     String levelFile = config.getString("Level File");
-                    play(levelFile, playerTypes, gameMode);
+                    play(levelFile, playerTypes, gameMode, runtimeMode);
 
                 //3. Play one game with visuals from a savegame
                 } else if (runMode.equalsIgnoreCase("Replay")) {
                     String saveGameFile = config.getString("Replay File Name");
-                    load(playerTypes, saveGameFile);
+                    load(playerTypes, saveGameFile, runtimeMode);
                 } else {
                     System.out.println("ERROR: run mode '" + runMode + "' not recognized.");
                 }
@@ -108,56 +124,78 @@ public class Play {
         }
     }
 
-    private static void play(Types.TRIBE[] tribes, long levelSeed, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode)
-    {
-        KeyController ki = new KeyController(true);
-        ActionController ac = new ActionController();
+    private static RuntimeMode parseRuntimeMode(JSONObject config) throws Exception {
+        if (!config.has(RUNTIME_MODE_KEY)) {
+            return RuntimeMode.HEADLESS;
+        }
 
-        Game game = _prepareGame(tribes, levelSeed, playerTypes, gameMode, ac);
-        Run.runGame(game, ki, ac);
+        String mode = config.getString(RUNTIME_MODE_KEY);
+        if (mode.equalsIgnoreCase("headless")) {
+            return RuntimeMode.HEADLESS;
+        }
+
+        if (mode.equalsIgnoreCase("gui")) {
+            return RuntimeMode.GUI;
+        }
+
+        throw new Exception("Invalid runtime mode '" + mode + "'. Accepted values: 'headless' or 'gui'.");
     }
 
-    private static void play(String levelFile, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode)
-    {
-        KeyController ki = new KeyController(true);
-        ActionController ac = new ActionController();
+    private static void runGame(Game game, RuntimeMode runtimeMode) {
+        if (runtimeMode == RuntimeMode.GUI) {
+            KeyController ki = new KeyController(true);
+            ActionController ac = new ActionController();
+            Run.runGame(game, ki, ac);
+            return;
+        }
 
-        Game game = _prepareGame(levelFile, playerTypes, gameMode, ac);
-        Run.runGame(game, ki, ac);
+        Run.runGame(game);
+    }
+
+    private static void play(Types.TRIBE[] tribes, long levelSeed, Run.PlayerType[] playerTypes,
+                             Types.GAME_MODE gameMode, RuntimeMode runtimeMode)
+    {
+        Game game = _prepareGame(tribes, levelSeed, playerTypes, gameMode);
+        runGame(game, runtimeMode);
+    }
+
+    private static void play(String levelFile, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode,
+                             RuntimeMode runtimeMode)
+    {
+        Game game = _prepareGame(levelFile, playerTypes, gameMode);
+        runGame(game, runtimeMode);
     }
 
 
-    private static void load(Run.PlayerType[] playerTypes, String saveGameFile)
+    private static void load(Run.PlayerType[] playerTypes, String saveGameFile, RuntimeMode runtimeMode)
     {
-        KeyController ki = new KeyController(true);
-        ActionController ac = new ActionController();
-
         long agentSeed = AGENT_SEED == -1 ? System.currentTimeMillis() + new Random().nextInt() : AGENT_SEED;
 
         Game game = _loadGame(playerTypes, saveGameFile, agentSeed);
-        Run.runGame(game, ki, ac);
+        runGame(game, runtimeMode);
     }
 
 
-    private static Game _prepareGame(String levelFile, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode, ActionController ac)
+    private static Game _prepareGame(String levelFile, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode)
     {
         long gameSeed = GAME_SEED == -1 ? System.currentTimeMillis() : GAME_SEED;
         if(RUN_VERBOSE) System.out.println("Game seed: " + gameSeed);
 
-        ArrayList<Agent> players = getPlayers(playerTypes, ac);
+        ArrayList<Agent> players = getPlayers(playerTypes);
 
         Game game = new Game();
         game.init(players, levelFile, gameSeed, gameMode);
         return game;
     }
 
-    private static Game _prepareGame(Types.TRIBE[] tribes, long levelSeed, Run.PlayerType[] playerTypes, Types.GAME_MODE gameMode, ActionController ac)
+    private static Game _prepareGame(Types.TRIBE[] tribes, long levelSeed, Run.PlayerType[] playerTypes,
+                                     Types.GAME_MODE gameMode)
     {
         long gameSeed = GAME_SEED == -1 ? System.currentTimeMillis() : GAME_SEED;
 
         if(RUN_VERBOSE) System.out.println("Game seed: " + gameSeed);
 
-        ArrayList<Agent> players = getPlayers(playerTypes, ac);
+        ArrayList<Agent> players = getPlayers(playerTypes);
 
         Game game = new Game();
 
@@ -172,7 +210,7 @@ public class Play {
         return game;
     }
 
-    private static ArrayList<Agent> getPlayers(Run.PlayerType[] playerTypes, ActionController ac)
+    private static ArrayList<Agent> getPlayers(Run.PlayerType[] playerTypes)
     {
         ArrayList<Agent> players = new ArrayList<>();
         long agentSeed = AGENT_SEED == -1 ? System.currentTimeMillis() + new Random().nextInt() : AGENT_SEED;

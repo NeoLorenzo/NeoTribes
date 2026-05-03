@@ -6,6 +6,8 @@ Define a practical contribution workflow for code and documentation updates.
 ## Current State
 NeoTribes is currently close to upstream Tribes. Most active contribution work is documentation hardening, baseline validation, and incremental maintainability improvements.
 
+Contributor workflow direction is headless-first: validation and debugging should not require GUI execution.
+
 ## Docs Map
 Start documentation contributions from:
 - [Docs Index](./docs/README.md)

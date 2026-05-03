@@ -1,6 +1,8 @@
 {
   "Run Mode" : "PlayLG",
   "Run Mode comment" : "PlayLG / PlayFile / Replay",
+  "Runtime Mode" : "headless",
+  "Runtime Mode comment" : "headless / gui",
   "Progressive Bias" : true,
   "Pruning" : true,
   "K init mult": 0.5,

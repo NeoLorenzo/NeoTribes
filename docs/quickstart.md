@@ -8,6 +8,7 @@ Get a contributor from clone to a validated local run path as quickly as possibl
 - External dependency is `lib/json.jar`.
 - Primary entry classes are `Play`, `Tournament`, and `RunElites`.
 - GUI play requires an X11 display.
+- Headless execution (`Tournament`, `RunElites`) is the primary validation/debug path for NeoTribes.
 
 ### Supported Environments
 - Linux/macOS shell workflows are currently the primary documented path.
@@ -49,8 +50,9 @@ java -cp out:lib/json.jar Play
 
 Notes:
 - `Play` reads `play.json` from repository root.
-- In headless terminals without X11, `Play` may fail with `java.awt.HeadlessException`.
-- For no-GUI runs, use `Tournament`/`RunElites`, or set `Constants.VISUALS = false` and rebuild.
+- `Runtime Mode` in `play.json` controls whether `Play` runs `headless` or `gui`.
+- If `Runtime Mode` is omitted, `Play` defaults to `headless`.
+- `Runtime Mode: gui` requires display/X11 and is intended for showcase/demo usage.
 
 ### 5) Run MAP-Elites Mode
 
